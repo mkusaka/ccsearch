@@ -1,11 +1,11 @@
-import '@testing-library/jest-dom';
-import { afterAll, afterEach, beforeAll } from 'vitest';
-import { setupServer } from 'msw/node';
-import i18n from 'i18next';
-import { initReactI18next } from 'react-i18next';
+import '@testing-library/jest-dom'
+import { afterAll, afterEach, beforeAll } from 'vitest'
+import { setupServer } from 'msw/node'
+import i18n from 'i18next'
+import { initReactI18next } from 'react-i18next'
 
 // MSW server setup
-export const server = setupServer();
+export const server = setupServer()
 
 // i18n setup for tests
 i18n.use(initReactI18next).init({
@@ -27,16 +27,16 @@ i18n.use(initReactI18next).init({
   interpolation: {
     escapeValue: false,
   },
-});
+})
 
 beforeAll(() => {
-  server.listen({ onUnhandledRequest: 'error' });
-});
+  server.listen({ onUnhandledRequest: 'error' })
+})
 
 afterEach(() => {
-  server.resetHandlers();
-});
+  server.resetHandlers()
+})
 
 afterAll(() => {
-  server.close();
-});
+  server.close()
+})

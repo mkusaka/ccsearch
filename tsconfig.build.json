@@ -33,6 +33,12 @@
     "src/routes/**/*",
     "src/server-*.ts",
     "src/cli-server.ts",
-    "src/index.ts"
+    "src/index.ts",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx",
+    "src/test/**/*",
+    "vitest.config.ts"
   ]
 }

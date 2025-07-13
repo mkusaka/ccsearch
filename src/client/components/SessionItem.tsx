@@ -149,7 +149,6 @@ export const SessionItem: React.FC<SessionItemProps> = ({
     })
   }
 
-
   const getProjectDisplayName = (project: string | undefined) => {
     if (!project) return { short: '', full: '' }
 
@@ -531,10 +530,8 @@ export const SessionItem: React.FC<SessionItemProps> = ({
                   }}
                 >
                   {(() => {
-                    const content = extractMessageContent(message);
-                    return content.length > 800
-                      ? content.substring(0, 800) + '...'
-                      : content;
+                    const content = extractMessageContent(message)
+                    return content.length > 800 ? content.substring(0, 800) + '...' : content
                   })()}
                 </div>
               </div>

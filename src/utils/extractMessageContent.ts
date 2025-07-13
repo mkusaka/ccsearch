@@ -1,4 +1,17 @@
-export function extractMessageContent(message: any): string {
+interface MessageWithContent {
+  content?: string;
+  text?: string;
+  summary?: string;
+  message?: {
+    content?: string | Array<{
+      type: string;
+      text?: string;
+      content?: string;
+    }>;
+  };
+}
+
+export function extractMessageContent(message: MessageWithContent | null | undefined): string {
   if (!message) return '';
   
   // Direct string fields
@@ -13,8 +26,8 @@ export function extractMessageContent(message: any): string {
     }
     if (Array.isArray(message.message.content)) {
       return message.message.content
-        .filter((item: any) => item?.type === 'text' && item?.text)
-        .map((item: any) => item.text)
+        .filter((item) => item?.type === 'text' && item?.text)
+        .map((item) => item.text || '')
         .join(' ');
     }
   }

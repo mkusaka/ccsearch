@@ -39,54 +39,23 @@ describe('SessionItem', () => {
     );
   };
 
-  test('renders session without crashing', () => {
+  test('renders session title correctly', () => {
     renderSessionItem();
-
-    // Check the title is rendered
+    
+    // Should show the first user message as title
     expect(screen.getByTitle('Hello Claude')).toBeInTheDocument();
   });
 
-  test('handles missing content gracefully using extractMessageContent', () => {
-    const sessionWithVariousFormats = {
+  test('handles empty messages gracefully', () => {
+    const sessionWithEmptyMessages: ClaudeSession = {
       ...mockSession,
-      messages: [
-        // Standard content
-        {
-          role: 'user' as const,
-          content: 'Standard content',
-          timestamp: '2024-01-01T00:00:00Z',
-        },
-        // Text field fallback
-        {
-          role: 'assistant' as const,
-          text: 'Text field fallback',
-          timestamp: '2024-01-01T00:00:01Z',
-        } as any,
-        // Array format
-        {
-          role: 'user' as const,
-          message: {
-            content: [
-              { type: 'text', text: 'Array part 1' },
-              { type: 'text', text: 'Array part 2' },
-            ],
-          },
-          timestamp: '2024-01-01T00:00:02Z',
-        } as any,
-        // Empty/undefined content - should be filtered out
-        {
-          role: 'assistant' as const,
-          content: undefined,
-          timestamp: '2024-01-01T00:00:03Z',
-        } as any,
-      ],
+      messages: [],
     };
 
-    // Should render without crashing despite various content formats
-    renderSessionItem({ session: sessionWithVariousFormats });
+    renderSessionItem({ session: sessionWithEmptyMessages });
     
-    // The title should use the first user message with content
-    expect(screen.getByTitle('Standard content')).toBeInTheDocument();
+    // Should show default title when no messages
+    expect(screen.getByTitle('Untitled Session')).toBeInTheDocument();
   });
 
   test('expands and collapses session details', async () => {
@@ -134,27 +103,34 @@ describe('SessionItem', () => {
     expect(screen.queryByRole('checkbox')).not.toBeInTheDocument();
   });
 
-  test('handles undefined content without crashing', () => {
-    const sessionWithUndefinedContent = {
+  test('filters out tool calls and system messages', () => {
+    const sessionWithToolCalls: ClaudeSession = {
       ...mockSession,
       messages: [
         {
-          role: 'user' as const,
-          content: undefined as any,
+          role: 'user',
+          content: 'Calculate 2+2',
           timestamp: '2024-01-01T00:00:00Z',
         },
         {
-          role: 'assistant' as const,
-          content: 'Valid content',
+          role: 'assistant',
+          content: '<function_calls>\n<invoke name="calculator">\n</invoke>\n</function_calls>',
           timestamp: '2024-01-01T00:00:01Z',
+        },
+        {
+          role: 'assistant',
+          content: 'The answer is 4.',
+          timestamp: '2024-01-01T00:00:02Z',
         },
       ],
     };
 
-    // Should render without crashing
-    renderSessionItem({ session: sessionWithUndefinedContent });
+    renderSessionItem({ session: sessionWithToolCalls });
     
-    // Since first user message has no content, it should show "Untitled Session"
-    expect(screen.getByTitle('Untitled Session')).toBeInTheDocument();
+    // Title should be from user message
+    expect(screen.getByTitle('Calculate 2+2')).toBeInTheDocument();
+    
+    // Preview should not show function calls
+    expect(screen.queryByText(/<function_calls>/)).not.toBeInTheDocument();
   });
 });

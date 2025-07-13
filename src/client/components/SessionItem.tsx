@@ -13,6 +13,7 @@ import {
 import { ClaudeSession, SearchResult } from '../types/api'
 import { SessionAnalyzer } from '../../utils/sessionAnalyzer'
 import { formatDateTime } from '../../utils/dateFormatter'
+import { extractMessageContent } from '../../utils/extractMessageContent'
 
 interface SessionItemProps {
   session: ClaudeSession
@@ -148,28 +149,6 @@ export const SessionItem: React.FC<SessionItemProps> = ({
     })
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const extractMessageContent = (msg: any): string => {
-    if (!msg) return ''
-
-    // Try different content fields
-    if (msg.content && typeof msg.content === 'string') {
-      return msg.content
-    } else if (msg.text && typeof msg.text === 'string') {
-      return msg.text
-    } else if (msg.summary) {
-      return msg.summary
-    } else if (msg.message && msg.message.content) {
-      if (typeof msg.message.content === 'string') {
-        return msg.message.content
-      } else if (Array.isArray(msg.message.content)) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        return msg.message.content.map((c: any) => c.text || '').join(' ')
-      }
-    }
-
-    return ''
-  }
 
   const getProjectDisplayName = (project: string | undefined) => {
     if (!project) return { short: '', full: '' }

@@ -245,26 +245,10 @@ if (process.argv.length === 2 || (process.argv.length === 4 && process.argv[2] =
         process.exit(1)
       })
     })
-    .catch(() => {
-      // Try original cli-server as last resort
-      import('./cli-server')
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        .then((module2: any) => {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          module2.runServer(parseInt(port)).catch((error2: any) => {
-            console.error('Failed to start server:', error2)
-
-            console.error('Server functionality may not be available in this build.')
-            process.exit(1)
-          })
-        })
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        .catch((error2: any) => {
-          console.error('Server module not available:', error2)
-
-          console.error('Please use the export or search commands.')
-          process.exit(1)
-        })
+    .catch((error) => {
+      console.error('Server module not available:', error)
+      console.error('Please use the export or search commands.')
+      process.exit(1)
     })
 } else {
   program.parse(process.argv)
